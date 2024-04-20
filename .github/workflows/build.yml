@@ -1,23 +1,27 @@
-on: [ push ]
-
-name: Test build
-
 jobs:
   build:
     name: Build APK
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Setup JDK
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'temurin'
-          java-version: 17
-      - name: Build APK
-        run: bash ./gradlew assemblePureDebug --stacktrace
-      - name: Upload APK
-        uses: actions/upload-artifact@v3
-        with:
-          name: apk
-          path: app/build/outputs/apk/pure/debug/*.apk
+    - continue-on-error: true
+      name: Checkout
+      uses: actions/checkout@v3
+    - continue-on-error: true
+      name: Setup JDK
+      uses: actions/setup-java@v3
+      with:
+        distribution: temurin
+        java-version: 17
+    - continue-on-error: true
+      name: Build APK
+      run: bash ./gradlew assemblePureDebug --stacktrace
+    - continue-on-error: true
+      name: Upload APK
+      uses: actions/upload-artifact@v3
+      with:
+        name: apk
+        path: app/build/outputs/apk/pure/debug/*.apk
+name: Test build
+on:
+  repository_dispatch:
+    types: trigger-ga___build.yml
